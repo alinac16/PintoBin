@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { Home, MapMarkedAlt, Recycle } from "@material-ui/icons";
+import { HomeRounded, EditLocationOutlined, Recycle } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   root: {
@@ -30,7 +30,7 @@ export default function CenteredTabs() {
         centered
       >
         <Tab icon={<Home />} />
-        <Tab icon={<MapMarkedAlt />} />
+        <Tab icon={<EditLocationOutlined />} />
         <Tab icon={<Recycle />} />
       </Tabs>
     </Paper>
