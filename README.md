@@ -34,7 +34,7 @@ Website:
 https://alinac16.github.io/PintoBin/
 
 ## Authors and acknowledgment
-Michelle Paradis, Alina Chalanuchpong, Doris Zhou
+Alina Chalanuchpong, Michelle Paradis, Doris Zhou
 
 ## Technologies used
 
