@@ -2,6 +2,18 @@
 
 ![alt text](screenshot/screenshot.png)
 
+## Challenge
+Create a tool that helps people understand climate change and how it affects them personally, instead of the entire planet. The tool could help people make changes to their lifestyle, mobilize action or could even be an educational tool.
+
+## Who is your target audience?
+People of all ages who want to recycle but find it difficult to start.
+
+## How does your product satisfy the challenge criteria?
+As temperature hits a new high in 2020, we must ask ourselves, what can we do to help combat climate change? As we all know, recycling helps reduce carbon emission and eliminate plastic pollution. However, according to statistics, only 9% of all recyclables have ended up being recycled. It is of vital importance for us to build a habit of recycling and make recycling even easier for everyone. Our product encourages recycling and makes it enjoyable and easy!
+
+## What's unique about your solution? 
+Unlike other recycling apps, our service is community-based, leading to more collaboration between users. This does not only enhance a sense of community and belonging, but also encourages users to come back and contribute more. In a sense, the pinned locations are a product of community collaboration.
+
 ## Idea Pitch
 Making recycling easier as a community! This app encourages users in the community to use the recycling bin located around their area by searching the existing recycling bins created by other users.
 
@@ -14,10 +26,12 @@ All users earn points by adding a bin to our map. Frequent users that contribute
 
 ## Demo
 
+Link: https://youtu.be/Zv1Hv2TMXPY
+
 ## Website
 
 Website: 
-https://alinac16.github.io/PintoBin/
+https://michpara.github.io/PintoBin/
 
 ## Authors and acknowledgment
 Michelle Paradis, Alina Chalanuchpong, Doris Zhou
