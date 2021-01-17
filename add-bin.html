@@ -112,8 +112,8 @@
       const map = new mapboxgl.Map({
         container: "map", // container id
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [-96, 37.8], // starting position
-        zoom: 3, // starting zoom
+        center: [-79, 44], // starting position
+        zoom: 6, // starting zoom
       });
 
       // Add geolocate control to the map.
@@ -136,6 +136,7 @@
 
       function getMarkers() {
         const db = firebase.firestore();
+
         db.settings({ timestampsInSnapshots: true });
 
         db.collection("location")
@@ -143,8 +144,7 @@
           .then(snapshot => {
             snapshot.docs.forEach(doc => {
               let items = doc.data();
-              console.log(items.coordinates.N_);
-
+              const colorMarker = items.item === "Garbage" ? "red" : "blue";
               const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
                 '<div class="img__container"><img src="' +
                   items.image +
@@ -152,7 +152,8 @@
                   items.item +
                   "</p>"
               );
-              const marker = new mapboxgl.Marker()
+
+              const marker = new mapboxgl.Marker({ color: colorMarker })
                 .setLngLat([items.coordinates.N_, items.coordinates.x_])
                 .addTo(map)
                 .setPopup(popup); // sets a popup on this marker
