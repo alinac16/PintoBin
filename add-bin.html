@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PintoBin</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+      type="text/css"
+    />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="border">
+      <header>
+        <button class="btn">
+          <i class="fa fa-long-arrow-left icon-top"></i>
+        </button>
+
+        <h1>Add a bin</h1>
+      </header>
+
+      <div id="map"></div>
+      <div class="center hideform">
+        <button id="close" style="float: right">X</button>
+        <form>
+          <!-- NEED TO ADD THE RIGHT OPTIONS AND MAKE IT LOOK NICE? -->
+          <ul>
+            <li>
+              <input type="radio" id="f-option" name="selector" />
+              <label for="f-option">Recycling</label>
+
+              <div class="check"></div>
+            </li>
+
+            <li>
+              <input type="radio" id="s-option" name="selector" />
+              <label for="s-option">Compost</label>
+
+              <div class="check"><div class="inside"></div></div>
+            </li>
+
+            <li>
+              <input type="radio" id="t-option" name="selector" />
+              <label for="t-option">Garbage</label>
+
+              <div class="check"><div class="inside"></div></div>
+            </li>
+          </ul>
+        </form>
+      </div>
+      <button id="add-bin">Add a bin</button>
+
+      <footer>
+        <div class="icons">
+          <form action="index.html">
+            <button class="btn"><i class="fa fa-home icon"></i></button>
+          </form>
+          &nbsp; &nbsp; &nbsp; &nbsp;
+          <form action="add-bin.html">
+            <button class="btn"><i class="fa fa-map icon"></i></button>
+          </form>
+          &nbsp; &nbsp; &nbsp; &nbsp;
+          <form action="recycle.html">
+            <button class="btn"><i class="fa fa-recycle icon"></i></button>
+          </form>
+          &nbsp; &nbsp; &nbsp; &nbsp;
+          <button class="btn"><i class="fa fa-user icon"></i></button>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCAxFqTGYOKmbkd-hJm2TR_CONSUiy3N4M",
+        authDomain: "recycling-map-469c1.firebaseapp.com",
+        databaseURL: "https://recycling-map-469c1-default-rtdb.firebaseio.com",
+        projectId: "recycling-map-469c1",
+        storageBucket: "recycling-map-469c1.appspot.com",
+        messagingSenderId: "466150224183",
+        appId: "1:466150224183:web:ed134b50e79ffc39a8aab2",
+        measurementId: "G-PZ5Z5Y667J",
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+
+      mapboxgl.accessToken =
+        "pk.eyJ1IjoiYWxpbmFjMjAiLCJhIjoiY2tiaDAwdmJoMDBraTJvcW52Z25vNXF4cyJ9.nOBWHUYX_DojV08SpnbElg";
+      const map = new mapboxgl.Map({
+        container: "map", // container id
+        style: "mapbox://styles/mapbox/streets-v11",
+        center: [-79, 44], // starting position
+        zoom: 6, // starting zoom
+      });
+
+      // Add geolocate control to the map.
+      map.addControl(
+        new mapboxgl.GeolocateControl({
+          positionOptions: {
+            enableHighAccuracy: true,
+          },
+          trackUserLocation: true,
+        })
+      );
+
+      map.addControl(
+        new MapboxGeocoder({
+          accessToken: mapboxgl.accessToken,
+          mapboxgl: mapboxgl,
+        }),
+        "top-left"
+      );
+
+      function getMarkers() {
+        const db = firebase.firestore();
+
+        db.settings({ timestampsInSnapshots: true });
+
+        db.collection("location")
+          .get()
+          .then(snapshot => {
+            snapshot.docs.forEach(doc => {
+              let items = doc.data();
+              const colorMarker = items.item === "Garbage" ? "red" : "blue";
+              const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+                '<div class="img__container"><img src="' +
+                  items.image +
+                  '"><p class="popup__text">' +
+                  items.item +
+                  "</p>"
+              );
+
+              const marker = new mapboxgl.Marker({ color: colorMarker })
+                .setLngLat([items.coordinates.N_, items.coordinates.x_])
+                .addTo(map)
+                .setPopup(popup); // sets a popup on this marker
+            });
+          });
+
+        $("#add-bin").on("click", function () {
+          $(".center").show();
+        });
+
+        $("#close").on("click", function () {
+          $(".center").hide();
+          $("#show").show();
+        });
+      }
+      getMarkers();
+    </script>
+  </body>
+</html>
