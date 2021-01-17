@@ -11,6 +11,7 @@ To encourage individuals to build habits that will lead to a more sustainable co
 ## Website
 
 Website: 
+https://alinac16.github.io/PintoBin/
 
 ## Authors and acknowledgment
 Michelle Paradis, Alina Chalanuchpong, Doris Zhou
