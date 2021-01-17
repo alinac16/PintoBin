@@ -17,7 +17,7 @@ All users earn points by adding a bin to our map. Frequent users that contribute
 ## Website
 
 Website: 
-https://alinac16.github.io/PintoBin/
+https://michpara.github.io/PintoBin/
 
 ## Authors and acknowledgment
 Michelle Paradis, Alina Chalanuchpong, Doris Zhou
