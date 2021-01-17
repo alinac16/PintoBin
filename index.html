@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PintoBin</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css" type="text/css"/>
+    <link rel="icon" href="map.png">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+    
+    <style>
+      @import url('https://fonts.googleapis.com/css?family=Lato');
+
+      .mapboxgl-ctrl-top-left .mapboxgl-ctrl{
+          width:220px;
+      }
+      .mapboxgl-ctrl-geocoder {
+         min-width: 220px !important;
+      }
+      .container{
+        display: block;
+        position: relative;
+        margin: 40px auto;
+        height: auto;
+        width: 250px;
+        height: 383px;
+        padding: 20px;
+      }
+      .container ul{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: auto;
+      }
+      ul li{
+        color: grey;
+        display: block;
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      ul li input[type=radio]{
+        position: absolute;
+        visibility: hidden;
+      }
+      ul li label{
+        display: block;
+        position: relative;
+        font-weight: 300;
+        font-size: 15px;
+        padding: 10px 0px 25px 5px;
+        margin: 10px auto;
+        height: 10px;
+        z-index: 9;
+        cursor: pointer;
+        -webkit-transition: all 0.25s linear;
+      }
+      ul li:hover label{
+        color: #6540F5;
+      }
+      ul li .check{
+        display: block;
+        position: absolute;
+        border: 5px solid #AAAAAA;
+        border-radius: 100%;
+        height: 25px;
+        width: 25px;
+        top: 0px;
+        left: -40px;
+        z-index: 5;
+        transition: border .25s linear;
+        -webkit-transition: border .25s linear;
+      }
+      ul li:hover .check {
+        border: 5px solid #6540F5;
+      ;
+      }
+      ul li .check::before {
+        display: block;
+        position: absolute;
+        content: '';
+        border-radius: 100%;
+        height: 15px;
+        top: 30px;
+        left: 5px;
+        margin: auto;
+        transition: background 0.25s linear;
+        -webkit-transition: background 0.25s linear;
+      }
+      input[type=radio]:checked ~ .check {
+        border: 5px solid  #6540F5;
+      }
+      input[type=radio]:checked ~ .check::before{
+        background:  #6540F5;
+      }
+      input[type=radio]:checked ~ label{
+        color:  #6540F5;
+      }
+      body { 
+        font-family:Arial, Helvetica, sans-serif; 
+      }
+      h2 {
+        padding-left: 20px;
+        position:absolute; 
+        bottom:0
+      }
+      header {
+        position:relative;
+        width: 281px; 
+        height:92px; 
+        box-shadow: 0px 2px 5px #27272780;
+        -webkit-box-shadow: 0px 2px 5px #27272780;
+        -moz-box-shadow: 0px 2px 5px #27272780;
+        z-index: 999999;
+      }
+      footer {
+        position:relative;
+        width: 281px; 
+        height: 55px; 
+        box-shadow: 0px -3px 5px #27272780;
+        -webkit-box-shadow: 0px -3px 5px #27272780;
+        -moz-box-shadow: 0px -3px 5px #27272780;
+        z-index: 999999;
+      }
+      .mapboxgl-popup-close-button{
+        outline:none;
+      }
+      .icons{
+        width: 281px; 
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icon{
+        text-align: center;
+      }
+      .icon-arrow{
+        position:absolute; 
+        bottom:75px;
+      }
+      .btn {
+        background-color:white;
+        border: none;
+        color: grey;
+        padding: 12px 16px;
+        font-size: 20px;
+        cursor: pointer;
+        outline:none;
+      }
+      .btn:hover {
+        color: #6540F5;
+      }
+      .border {
+        position:relative;
+        border: 3px solid black; 
+        border-radius:1%; 
+        width: 281px; 
+        height: 500px; 
+        margin: auto;
+      }
+      .center {
+        margin: auto;
+        width: 100px;
+        height: 160px;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        background-color: white; 
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius:12px;
+        box-shadow: 0px -2px 5px #27272780;
+        -webkit-box-shadow: 0px -2px 5px #27272780;
+        -moz-box-shadow: 0px -2px 5px #27272780;  
+      }
+      .hideform {
+        display: none;
+      }
+      #map {  
+        width: 281px; 
+        height: 355px;
+      }
+      #add-bin{
+        outline:none;
+        cursor:pointer;
+        margin: 0;
+        position: absolute;
+        top: 78%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        background-color: #6540F5; 
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius:12px;
+        box-shadow: 0px -2px 5px #27272780;
+        -webkit-box-shadow: 0px -2px 5px #27272780;
+        -moz-box-shadow: 0px -2px 5px #27272780;
+      }
+      #close{
+        cursor:pointer;
+      }
+
+    </style>
+  </head>
+<body>
+  
+  <div class="border">
+    <header>
+      <button class="btn"><i class="fa fa-long-arrow-left icon-top"></i></button>
+
+      <h2>Add a bin</h2>
+    </header>
+
+    <div id="map"></div>
+    <div class="center hideform">
+        <button id="close" style="float: right;">X</button>
+        <div id="select">
+            <ul>
+                <li>
+                  <input type="radio" id="garbage" name="selector" value='Garbage' onchange="addMarkers()">
+                  <label for="garbage">Garbage</label>
+                  
+                  <div class="check"></div>
+                </li>
+                
+                <li>
+                  <input type="radio" id="recycling" name="selector" value='Recycling' onchange="addMarkers()">
+                  <label for="recycling">Recycling</label>
+                  
+                  <div class="check"><div class="inside"></div></div>
+                </li>
+                
+                <li>
+                  <input type="radio" id="compost" name="selector" value='Compost' onchange="addMarkers()">
+                  <label for="compost">Compost</label>
+                  
+                  <div class="check"><div class="inside"></div></div>
+                </li>
+              </ul>
+        </div>
+    </div>
+    <button id="add-bin">
+      Add a bin
+    </button>
+
+    <footer>
+      <div class='icons'>
+        <button class="btn"><i class="fa fa-home icon"></i></button>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <form action="add-bin.html">
+          <button class="btn"><i class="fa fa-map icon"></i></button>
+        </form>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <button class="btn"><i class="fa fa-recycle icon"></i></button>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <button class="btn"><i class="fa fa-user icon"></i></button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAxFqTGYOKmbkd-hJm2TR_CONSUiy3N4M",
+      authDomain: "recycling-map-469c1.firebaseapp.com",
+      databaseURL: "https://recycling-map-469c1-default-rtdb.firebaseio.com",
+      projectId: "recycling-map-469c1",
+      storageBucket: "recycling-map-469c1.appspot.com",
+      messagingSenderId: "466150224183",
+      appId: "1:466150224183:web:ed134b50e79ffc39a8aab2",
+      measurementId: "G-PZ5Z5Y667J"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics()
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWljaHBhcmEiLCJhIjoiY2trMDN5ZTNwMGR4bjMxbGV4MmZobzIwbyJ9.ancjSgjTbpArvD64E8vDsw';
+      var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-96, 37.8], // starting position
+      zoom: 3 // starting zoom
+    });
+  
+    // Add geolocate control to the map.
+    var geolocate = new mapboxgl.GeolocateControl({
+      positionOptions: {
+       enableHighAccuracy: true
+      },
+      trackUserLocation: true
+    });
+    
+    map.addControl(geolocate);
+
+    // Add geocoder control to map
+    geocoder = new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+    })
+
+    map.addControl(geocoder,'top-left');
+
+    const db = firebase.firestore();
+    db.settings({ timestampsInSnapshots: true});
+
+    //receive lat and long values if locate is used
+    var longitude;
+    var latitude;
+    geolocate.on('geolocate', function (position) {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+      console.log('locate')
+    })
+
+    //receive lat and long values if search is used
+    geocoder.on('result', function (position) {
+      latitude = position.result.center[1]
+      longitude = position.result.center[0];
+      console.log('search')
+    })
+
+    // retrieves and places all markers from db
+    function getMarkers() { 
+      db.collection('location').get().then((snapshot) => {
+
+        snapshot.docs.forEach(doc => {
+          let items = doc.data();
+          
+          var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
+              '<h3>' + items.item + '</h3>' 
+              // <br> <img src="' + items.image + '">
+          )
+          var marker = new mapboxgl.Marker()
+            .setLngLat([items.coordinates.N_, items.coordinates.x_])
+            .addTo(map)
+            .setPopup(popup); // sets a popup on this marker
+        });
+      });
+    }
+
+
+    //adds a marker to the db
+    function addMarkers(){
+      var radios = document.getElementsByName('selector');
+      for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+          var selected = radios[i].value
+          db.collection("location").add({
+
+            item: selected,
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude)
+          }).then(function(docRef) {
+            location.reload()
+            console.log("Document written with ID: ", docRef.id);
+          }).catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+
+          break;
+        }
+      }
+    }
+  
+    $('#add-bin').on('click', function () {
+      $('.center').show();
+    })
+
+    $('#close').on('click', function () {
+      $('.center').hide();
+      $('#show').show();
+    })
+    getMarkers()
+  </script>
+</body>
+</html>
