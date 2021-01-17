@@ -1,5 +1,7 @@
 # PintoBin (ElleHacks 2021)
 
+![alt text](screenshot/screenshot.png)
+
 ## Idea Pitch
 Making recycling easier as a community! This app encourages users in the community to use the recycling bin located around their area by searching the existing recycling bins created by other users.
 
