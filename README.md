@@ -18,7 +18,7 @@ Michelle Paradis, Alina Chalanuchpong, Doris Zhou
 
 ## Technologies used
 
-HTML, CSS, JavaScript, Firebase, MapBox API
+HTML, CSS, JavaScript and jQuery, Firebase, MapBox API
 
 ## What motivated you to go with this project?
  
