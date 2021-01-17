@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css" type="text/css"/>
+    <link rel="icon" href="map.png">
+
    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
@@ -192,6 +194,7 @@
         height: 575px;
       }
       #add-bin{
+        outline:none;
         cursor:pointer;
         margin: 0;
         position: absolute;
@@ -225,30 +228,30 @@
     <div id="map"></div>
     <div class="center hideform">
         <button id="close" style="float: right;">X</button>
-        <form> <!-- NEED TO ADD THE RIGHT OPTIONS AND MAKE IT LOOK NICE? -->
+        <div id="select"> <!-- NEED TO ADD THE RIGHT OPTIONS AND MAKE IT LOOK NICE? -->
             <ul>
                 <li>
-                  <input type="radio" id="f-option" name="selector">
-                  <label for="f-option">Recycling</label>
+                  <input type="radio" id="garbage" name="selector" value='Garbage' onchange="addMarkers()">
+                  <label for="garbage">Garbage</label>
                   
                   <div class="check"></div>
                 </li>
                 
                 <li>
-                  <input type="radio" id="s-option" name="selector">
-                  <label for="s-option">Compost</label>
+                  <input type="radio" id="recycling" name="selector" value='Recycling' onchange="addMarkers()">
+                  <label for="recycling">Recycling</label>
                   
                   <div class="check"><div class="inside"></div></div>
                 </li>
                 
                 <li>
-                  <input type="radio" id="t-option" name="selector">
-                  <label for="t-option">Garbage</label>
+                  <input type="radio" id="compost" name="selector" value='Compost' onchange="addMarkers()">
+                  <label for="compost">Compost</label>
                   
                   <div class="check"><div class="inside"></div></div>
                 </li>
               </ul>
-        </form>
+        </div>
     </div>
     <button id="add-bin">
       Add a bin
@@ -256,23 +259,19 @@
 
     <footer>
       <div class='icons'>
-        <form action="index.html">
-            <button class="btn"><i class="fa fa-home icon"></i></button>
-        </form>
+        <button class="btn"><i class="fa fa-home icon"></i></button>
         &nbsp;
         &nbsp;
         &nbsp;
         &nbsp;
         <form action="add-bin.html">
-        <button class="btn"><i class="fa fa-map icon"></i></button>
+          <button class="btn"><i class="fa fa-map icon"></i></button>
         </form>
         &nbsp;
         &nbsp;
         &nbsp;
         &nbsp;
-        <form action="recycle.html">
-            <button class="btn"><i class="fa fa-recycle icon"></i></button>
-        </form>
+        <button class="btn"><i class="fa fa-recycle icon"></i></button>
         &nbsp;
         &nbsp;
         &nbsp;
@@ -302,7 +301,7 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics()
 
-    mapboxgl.accessToken = '';
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWljaHBhcmEiLCJhIjoiY2trMDN5ZTNwMGR4bjMxbGV4MmZobzIwbyJ9.ancjSgjTbpArvD64E8vDsw';
       var map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -311,36 +310,48 @@
     });
   
     // Add geolocate control to the map.
-    map.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: {
-        enableHighAccuracy: true
-      },
-        trackUserLocation: true
-    }));
+    var geolocate = new mapboxgl.GeolocateControl({
+positionOptions: {
+enableHighAccuracy: true
+},
+trackUserLocation: true
+});
+    map.addControl(geolocate);
 
-    map.addControl(new MapboxGeocoder({
+    geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl,
-    }),'top-left');
+    })
 
+    map.addControl(geocoder,'top-left');
+
+          const db = firebase.firestore();
+      db.settings({ timestampsInSnapshots: true});
+
+      var longitude;
+      var latitude;
+      geolocate.on('geolocate', function (position) {
+      latitude = position.coords.latitude;
+      longitude = position.coords.longitude;
+})
+
+       geocoder.on('result', function (position) {
+      console.log('search')
+     latitude = position.result.center[1]
+      longitude = position.result.center[0];
+
+    })
     function getMarkers() { 
 
-      const db = firebase.firestore();
-      db.settings({ timestampsInSnapshots: true});
+
 
       db.collection('location').get().then((snapshot) => {
 
         snapshot.docs.forEach(doc => {
           let items = doc.data();
-
-          var text =''
-          for(var i = 0; i<items.items.length; i++){
-            text += items.items[i]
-          }
           
           var popup = new mapboxgl.Popup({ offset: 25 }).setHTML(
-              '<h3>' + text + '</h3> <br> <img src="' + items.image + '">' 
+              '<h3>' + items.item + '</h3> <br> <img src="' + items.image + '">' 
           )
           var marker = new mapboxgl.Marker()
             .setLngLat([items.coordinates.N_, items.coordinates.x_])
@@ -349,6 +360,35 @@
         });
       });
 
+    }
+
+
+    function addMarkers(){
+
+
+      var radios = document.getElementsByName('selector');
+      for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+          console.log('checked')
+          var selected = radios[i].value
+          db.collection("location").add({
+
+            item: selected,
+            coordinates: new firebase.firestore.GeoPoint(latitude, longitude)
+          }).then(function(docRef) {
+            console.log("Document written with ID: ", docRef.id);
+          }).catch(function(error) {
+            console.error("Error adding document: ", error);
+          });
+          break;
+        }
+      }
+  }
+
+
+
+
+    
       $('#add-bin').on('click', function () {
         $('.center').show();
       })
@@ -357,7 +397,6 @@
         $('.center').hide();
         $('#show').show();
       })
-    }
     getMarkers()
   </script>
 </body>
