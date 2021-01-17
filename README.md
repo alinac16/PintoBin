@@ -1,6 +1,6 @@
 # PintoBin (ElleHacks 2021)
 
-![alt text](screenshot/screenshot.png)
+![alt text](screenshot/colored_version.png)
 
 ## Challenge
 Create a tool that helps people understand climate change and how it affects them personally, instead of the entire planet. The tool could help people make changes to their lifestyle, mobilize action or could even be an educational tool.
