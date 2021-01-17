@@ -28,4 +28,6 @@ HTML, CSS, JavaScript, Firebase, MapBox API
 
 ## Do you have any designs?
 
+![alt text](design/design.png)
+
 ## What is the potential for impact of the idea?
