@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PintoBin</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css" type="text/css"/>
+    
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+    
+    <style>
+      body { 
+        font-family:Arial, Helvetica, sans-serif; 
+      }
+      h1 {
+        padding-left: 20px;
+        position:absolute; 
+        bottom:0
+      }
+      header {
+        position:relative;
+        width: 375px; 
+        height:139px; 
+        box-shadow: 0px 2px 5px #27272780;
+        -webkit-box-shadow: 0px 2px 5px #27272780;
+        -moz-box-shadow: 0px 2px 5px #27272780;
+        z-index: 999999;
+      }
+      footer {
+        position:relative;
+        width: 375px; 
+        height: 83px; 
+        box-shadow: 0px -3px 5px #27272780;
+        -webkit-box-shadow: 0px -3px 5px #27272780;
+        -moz-box-shadow: 0px -3px 5px #27272780;
+        z-index: 999999;
+      }
+      .icons{
+        width:308px;
+        margin: auto;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .icon{
+        text-align: center;
+      }
+      .icon-arrow{
+        position:absolute; 
+        bottom:75px;
+      }
+      .btn {
+        background-color:white;
+        border: none;
+        color: grey;
+        padding: 12px 16px;
+        font-size: 26px;
+        cursor: pointer;
+        outline:none;
+      }
+      .btn:hover {
+        color: #6540F5;
+      }
+      .border {
+        position:relative;
+        border: 3px solid black; 
+        border-radius:1%; 
+        width: 375px; 
+        height: 812px; 
+        margin: auto;
+      }
+      #map {  
+        width: 375px; 
+        height: 575px;
+      }
+      #add-bin{
+        cursor:pointer;
+        margin: 0;
+        position: absolute;
+        top: 84%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        background-color: #6540F5; 
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius:12px;
+        box-shadow: 0px -2px 5px #27272780;
+        -webkit-box-shadow: 0px -2px 5px #27272780;
+        -moz-box-shadow: 0px -2px 5px #27272780;
+      }
+    </style>
+  </head>
+<body>
+  
+  <div class="border">
+    <header>
+      <button class="btn"><i class="fa fa-long-arrow-left icon-top"></i></button>
+
+      <h1>Recycle</h1>
+    </header>
+
+    <div id="map"></div>
+
+    <button id="add-bin">
+        Recycle
+    </button>
+
+    <footer>
+        <div class='icons'>
+          <form action="index.html">
+              <button class="btn"><i class="fa fa-home icon"></i></button>
+          </form>
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          <form action="add-bin.html">
+          <button class="btn"><i class="fa fa-map icon"></i></button>
+          </form>
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          <form action="recycle.html">
+              <button class="btn"><i class="fa fa-recycle icon"></i></button>
+          </form>
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          &nbsp;
+          <button class="btn"><i class="fa fa-user icon"></i></button>
+        </div>
+      </footer>
+  </div>
+    
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibWljaHBhcmEiLCJhIjoiY2trMDN5ZTNwMGR4bjMxbGV4MmZobzIwbyJ9.ancjSgjTbpArvD64E8vDsw';
+      var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [-96, 37.8], // starting position
+      zoom: 3 // starting zoom
+    });
+  
+    // Add geolocate control to the map.
+    map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+        enableHighAccuracy: true
+      },
+        trackUserLocation: true
+      }));
+
+    map.addControl(new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl,
+    }),'top-left');
+  </script>
+</body>
+</html>
